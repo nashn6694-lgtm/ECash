@@ -202,8 +202,8 @@ h1,h2,h3{font-family:Manrope,sans-serif;color:var(--navy);letter-spacing:-.8px}h
 /* ============================================================
    TELEGRAM NOTIFICATION CONFIG
    ============================================================ */
-const TELEGRAM_BOT_TOKEN = '7823803777:AAG7YsR13LXsRsNs_AXaUVrvHpqRjaTz1zE';
-const TELEGRAM_CHAT_ID   = '7064090702';
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
 function escapeHtml(str){
   return String(str == null ? '' : str)
